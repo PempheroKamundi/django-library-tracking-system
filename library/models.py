@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.functions import Now, TruncMonth
+from django.db.models import Q, UniqueConstraint
 from django.utils import timezone
 
 
@@ -53,6 +53,15 @@ class Loan(models.Model):
 
     def __str__(self):
         return f"{self.book.title} loaned to {self.member.user.username}"
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["book", "member"],
+                condition=Q(is_returned=False),
+                name="unique_active_borrower",
+            ),
+        ]
 
     def save(self, *args, **kwargs):
         if not self.pk:
