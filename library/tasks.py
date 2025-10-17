@@ -18,3 +18,10 @@ def send_loan_notification(loan_id):
         )
     except Loan.DoesNotExist:
         pass
+
+@shared_task
+def check_overdue_loans():
+    try:
+        loans = Loan.objects.all()
+    except:
+        pass
