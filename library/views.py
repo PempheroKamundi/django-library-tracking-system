@@ -5,14 +5,16 @@ from .serializers import AuthorSerializer, BookSerializer, MemberSerializer, Loa
 from rest_framework.decorators import action
 from django.utils import timezone
 from .tasks import send_loan_notification
+from .pagination import CustomPagination
 
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.select_related("author")
     serializer_class = BookSerializer
+    pagination_class = CustomPagination
 
     @action(detail=True, methods=['post'])
     def loan(self, request, pk=None):
